@@ -1,0 +1,89 @@
+--- app/src/main/java/com/example/ui/screens/NowPlayingScreen.kt
++++ app/src/main/java/com/example/ui/screens/NowPlayingScreen.kt
+@@ -10,2 +10,5 @@
+ import androidx.compose.material.icons.filled.*
+ import androidx.compose.material.icons.outlined.FavoriteBorder
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.rememberLazyListState
++import androidx.compose.ui.geometry.Offset
++import androidx.compose.ui.graphics.Shadow
++import androidx.compose.ui.text.TextStyle
+@@ -37,2 +40,3 @@
+ 
++import androidx.activity.compose.BackHandler
+ @OptIn(ExperimentalMaterial3Api::class)
+@@ -48,2 +52,14 @@
+ 
++    var isFullScreenLyrics by remember { mutableStateOf(false) }
++
++    if (isFullScreenLyrics) {
++        BackHandler { isFullScreenLyrics = false }
++        FullScreenLyricsScreen(
++            viewModel = viewModel,
++            song = song,
++            progressMs = progressMs,
++            isPlaying = isPlaying,
++            onClose = { isFullScreenLyrics = false }
++        )
++        return
++    }
++
+     val scrollState = rememberScrollState()
+@@ -207,6 +223,7 @@
+                 Box(
+                     modifier = Modifier
+                         .fillMaxWidth()
+-                        .height(350.dp)
++                        .weight(1f)
+                         .clip(RoundedCornerShape(12.dp))
+                         .background(Color(0xFF28543B))
++                        .clickable { isFullScreenLyrics = true }
+                         .padding(16.dp)
+@@ -218,2 +235,10 @@
+                         modifier = Modifier.align(Alignment.TopStart)
+                     )
++                    
++                    IconButton(
++                        onClick = { isFullScreenLyrics = true },
++                        modifier = Modifier.align(Alignment.TopEnd)
++                    ) {
++                        Icon(Icons.Filled.Fullscreen, contentDescription = "Full Screen", tint = Color.White)
++                    }
+                     
+@@ -265,5 +290,2 @@
+ 
+-    // Find current lyric index based on time
+-    val currentIndex = remember(progressMs, lyrics) {
+-        var index = lyrics.indexOfLast { it.timeMs <= progressMs }
+-        if (index == -1) index = 0
+-        index
+-    }
+-
+-    Column(
+-        modifier = Modifier
+-            .fillMaxSize()
+-            .padding(top = 32.dp),
+-        horizontalAlignment = Alignment.Start,
+-        verticalArrangement = Arrangement.Center
+-    ) {
+-        for (offset in -2..2) {
+-            val index = currentIndex + offset
+-            if (index in lyrics.indices) {
+-                val isCurrent = offset == 0
+-                Text(
+-                    text = lyrics[index].text,
+-                    color = if (isCurrent) Color.White else Color.White.copy(alpha = 0.5f),
+-                    fontSize = if (isCurrent) 24.sp else 20.sp,
+-                    fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
+-                    modifier = Modifier.padding(vertical = 8.dp)
+-                )
+-            } else {
+-                Text(
+-                    text = " ",
+-                    fontSize = 20.sp,
+-                    modifier = Modifier.padding(vertical = 8.dp)
+-                )
+-            }
+-        }
+-    }
+-}

@@ -1,0 +1,6 @@
+{
+  "name": "Localify",
+  "description": "A local music player with a clean UI, liked songs, and synced lyrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

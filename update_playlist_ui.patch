@@ -1,0 +1,199 @@
+--- app/src/main/java/com/example/ui/screens/HomeScreen.kt
++++ app/src/main/java/com/example/ui/screens/HomeScreen.kt
+@@ -35,2 +35,165 @@
+ 
++@Composable
++fun PlaylistScreen(
++    playlist: Playlist,
++    viewModel: MusicViewModel,
++    onBack: () -> Unit,
++    onPlay: (Int, List<Song>) -> Unit,
++    onAddSongToPlaylist: (Song) -> Unit
++) {
++    val songs by viewModel.getPlaylistSongs(playlist.id).collectAsState(initial = emptyList())
++    val currentSong by viewModel.audioPlayer.currentSong.collectAsState()
++    
++    Column(modifier = Modifier.fillMaxSize().background(DarkBackground)) {
++        Row(
++            modifier = Modifier.fillMaxWidth().padding(16.dp),
++            verticalAlignment = Alignment.CenterVertically
++        ) {
++            IconButton(onClick = onBack) {
++                Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
++            }
++            Spacer(modifier = Modifier.width(16.dp))
++            Text(
++                text = playlist.name,
++                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
++                color = Color.White
++            )
++        }
++        
++        if (songs.isEmpty()) {
++            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
++                Text("No songs in this playlist.", color = Color.Gray)
++            }
++        } else {
++            LazyColumn(modifier = Modifier.fillMaxSize()) {
++                itemsIndexed(songs) { index, song ->
++                    SongListItem(
++                        song = song,
++                        isCurrent = currentSong?.id == song.id,
++                        onClick = { onPlay(index, songs) },
++                        onLongClick = { onAddSongToPlaylist(song) }
++                    )
++                }
++            }
++        }
++    }
++}
++
++@Composable
++fun LikedSongsScreen(
++    viewModel: MusicViewModel,
++    onBack: () -> Unit,
++    onPlay: (Int, List<Song>) -> Unit,
++    onAddSongToPlaylist: (Song) -> Unit
++) {
++    val likedSongsList by viewModel.likedSongs.collectAsState(initial = emptyList())
++    val localSongs by viewModel.localSongs.collectAsState()
++    val currentSong by viewModel.audioPlayer.currentSong.collectAsState()
++    
++    val songs = remember(likedSongsList, localSongs) {
++        val likedIds = likedSongsList.map { it.songId }.toSet()
++        localSongs.filter { it.id in likedIds }
++    }
++    
++    Column(modifier = Modifier.fillMaxSize().background(DarkBackground)) {
++        Row(
++            modifier = Modifier.fillMaxWidth().padding(16.dp),
++            verticalAlignment = Alignment.CenterVertically
++        ) {
++            IconButton(onClick = onBack) {
++                Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
++            }
++            Spacer(modifier = Modifier.width(16.dp))
++            Text(
++                text = "Liked Songs",
++                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
++                color = Color.White
++            )
++        }
++        
++        if (songs.isEmpty()) {
++            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
++                Text("No liked songs.", color = Color.Gray)
++            }
++        } else {
++            LazyColumn(modifier = Modifier.fillMaxSize()) {
++                itemsIndexed(songs) { index, song ->
++                    SongListItem(
++                        song = song,
++                        isCurrent = currentSong?.id == song.id,
++                        onClick = { onPlay(index, songs) },
++                        onLongClick = { onAddSongToPlaylist(song) }
++                    )
++                }
++            }
++        }
++    }
++}
++
+ @OptIn(ExperimentalMaterial3Api::class)
+@@ -48,2 +211,5 @@
+     var newPlaylistName by remember { mutableStateOf("") }
++    
++    var viewingPlaylist by remember { mutableStateOf<Playlist?>(null) }
++    var viewingLikedSongs by remember { mutableStateOf(false) }
+ 
+@@ -107,2 +273,26 @@
+         containerColor = DarkBackground
+     ) { padding ->
++        if (viewingPlaylist != null) {
++            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
++                PlaylistScreen(
++                    playlist = viewingPlaylist!!,
++                    viewModel = viewModel,
++                    onBack = { viewingPlaylist = null },
++                    onPlay = { index, songs -> viewModel.audioPlayer.playPlaylist(songs, index) },
++                    onAddSongToPlaylist = { songToAddPlaylist = it }
++                )
++            }
++            return@Scaffold
++        }
++        if (viewingLikedSongs) {
++            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
++                LikedSongsScreen(
++                    viewModel = viewModel,
++                    onBack = { viewingLikedSongs = false },
++                    onPlay = { index, songs -> viewModel.audioPlayer.playPlaylist(songs, index) },
++                    onAddSongToPlaylist = { songToAddPlaylist = it }
++                )
++            }
++            return@Scaffold
++        }
++        
+@@ -118,3 +308,5 @@
+                         currentSong = currentSong,
+-                        onPlay = { index, songs -> viewModel.audioPlayer.playPlaylist(songs, index) },
++                        onPlay = { index, songs -> 
++                            viewModel.audioPlayer.playPlaylist(songs, index)
++                        },
+                         onAddSongToPlaylist = { songToAddPlaylist = it },
++                        onPlaylistClick = { viewingPlaylist = it },
++                        onLikedSongsClick = { viewingLikedSongs = true }
+                     )
+@@ -131,3 +323,5 @@
+                     2 -> LibraryTab(
+                         playlists = playlists,
+-                        onCreatePlaylist = { showCreatePlaylistDialog = true }
++                        onCreatePlaylist = { showCreatePlaylistDialog = true },
++                        onPlaylistClick = { viewingPlaylist = it },
++                        onLikedSongsClick = { viewingLikedSongs = true }
+                     )
+@@ -144,3 +338,5 @@
+     onPlay: (Int, List<Song>) -> Unit,
+-    onAddSongToPlaylist: (Song) -> Unit
++    onAddSongToPlaylist: (Song) -> Unit,
++    onPlaylistClick: (Playlist) -> Unit,
++    onLikedSongsClick: () -> Unit
+ ) {
+@@ -165,3 +361,3 @@
+                 item {
+-                    PlaylistGridItem(name = "Liked Songs", icon = Icons.Filled.Favorite, tint = SpotifyGreen)
++                    PlaylistGridItem(name = "Liked Songs", icon = Icons.Filled.Favorite, tint = SpotifyGreen, onClick = onLikedSongsClick)
+                 }
+@@ -169,3 +365,3 @@
+                     PlaylistGridItem(name = playlist.name, icon = Icons.Filled.QueueMusic, tint = Color.White)
++                        PlaylistGridItem(name = playlist.name, icon = Icons.Filled.QueueMusic, tint = Color.White, onClick = { onPlaylistClick(playlist) })
+                 }
+@@ -192,3 +388,3 @@
+ @Composable
+-fun PlaylistGridItem(name: String, icon: androidx.compose.ui.graphics.vector.ImageVector, tint: Color) {
++fun PlaylistGridItem(name: String, icon: androidx.compose.ui.graphics.vector.ImageVector, tint: Color, onClick: () -> Unit) {
+     Row(
+@@ -198,3 +394,3 @@
+             .clip(RoundedCornerShape(4.dp))
+             .background(SurfaceVariantColor)
+-            .clickable { /* TODO */ }
++            .clickable(onClick = onClick)
+             .padding(end = 8.dp),
+@@ -262,3 +458,5 @@
+     playlists: List<Playlist>,
+-    onCreatePlaylist: () -> Unit
++    onCreatePlaylist: () -> Unit,
++    onPlaylistClick: (Playlist) -> Unit,
++    onLikedSongsClick: () -> Unit
+ ) {
+@@ -282,3 +480,3 @@
+                 modifier = Modifier
+                     .fillMaxWidth()
+-                    .clickable { /* TODO */ }
++                    .clickable(onClick = onLikedSongsClick)
+                     .padding(vertical = 12.dp),
+@@ -304,3 +502,3 @@
+                 modifier = Modifier
+                     .fillMaxWidth()
+-                    .clickable { /* TODO */ }
++                    .clickable { onPlaylistClick(playlist) }
+                     .padding(vertical = 12.dp),

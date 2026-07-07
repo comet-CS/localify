@@ -1,0 +1,56 @@
+--- app/src/main/java/com/example/ui/screens/HomeScreen.kt
++++ app/src/main/java/com/example/ui/screens/HomeScreen.kt
+@@ -10,3 +10,6 @@
+ import androidx.compose.material.icons.filled.Favorite
+ import androidx.compose.material.icons.filled.Home
++import androidx.compose.material.icons.filled.Search
++import androidx.compose.material.icons.filled.LibraryMusic
++import androidx.compose.material.icons.filled.Add
+ import androidx.compose.material.icons.filled.Pause
+@@ -21,2 +24,5 @@
+ import androidx.compose.ui.unit.sp
++import androidx.compose.foundation.lazy.grid.GridCells
++import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
++import androidx.compose.foundation.lazy.grid.items
+ import coil.compose.AsyncImage
+@@ -27,2 +33,3 @@
+ import com.example.ui.theme.SurfaceColor
++import com.example.ui.theme.Playlist
+ import com.example.ui.theme.SurfaceVariantColor
+@@ -35,3 +42,3 @@
+     val localSongs by viewModel.localSongs.collectAsState()
+-    val likedSongs by viewModel.likedSongs.collectAsState()
++    val playlists by viewModel.playlists.collectAsState()
+     val currentSong by viewModel.audioPlayer.currentSong.collectAsState()
+@@ -41,3 +48,3 @@
+ 
+-    val displaySongs = if (selectedTab == 0) localSongs else likedSongs
++    // Search state
++    var searchQuery by remember { mutableStateOf("") }
+ 
+@@ -62,3 +69,3 @@
+                         colors = NavigationBarItemDefaults.colors(
+-                            selectedIconColor = Color.White,
++                            selectedIconColor = Color.Black,
+                             selectedTextColor = Color.White,
+@@ -74,7 +81,20 @@
+                         icon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
+                         label = { Text("Search") },
+                         colors = NavigationBarItemDefaults.colors(
+-                            selectedIconColor = Color.White,
++                            selectedIconColor = Color.Black,
++                            selectedTextColor = Color.White,
++                            indicatorColor = SurfaceColor,
++                            unselectedIconColor = Color.Gray,
++                            unselectedTextColor = Color.Gray
++                        )
++                    )
++                    NavigationBarItem(
++                        selected = selectedTab == 2,
++                        onClick = { selectedTab = 2 },
++                        icon = { Icon(Icons.Filled.LibraryMusic, contentDescription = "Library") },
++                        label = { Text("Library") },
++                        colors = NavigationBarItemDefaults.colors(
++                            selectedIconColor = Color.Black,
+                             selectedTextColor = Color.White,
+                             indicatorColor = SurfaceColor,
