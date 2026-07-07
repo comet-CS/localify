@@ -1,21 +1,28 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Welcome to Localify!
 
-# Run and deploy your AI Studio app
+**Have you ever been on vacation, no stable WiFi, dont wanna spend a whole bunch of money on Roaming charges, but still want to listen to music? Well Localify is your solution!**
 
-This contains everything you need to run your app locally.
+**Localify automatically detects all music/sound files on your Android phone and displays them.**
 
-View your app in AI Studio: https://ai.studio/apps/f0ce037c-c8dd-4f09-b7d7-1d0a7b6f0503
+**Once you connect to Wi-Fi or Mobile Data Localify should automatically start syncing lyrics for all the music files on your phone, yes you heard me right! Lyrics.**
+**Localify has a Lyrics section that efficiently and Smoothly Displays the current lyric of the song even while Offline (Localify does NOT download lyrics for newly added songs while your device if offline!)**
 
-## Run Locally
+**Have a HUGE amount of files? Use the handy Search feature to find certain songs!**
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+**Make Playlists, Listen to songs, Sing out loud with the Lyrics feature, Blacklist certain songs, Search for songs, have a smooth experience...**
+**ALL WITHOUT: Ad's, paywalls, Accounts etc**
 
+# #MAKEMUSICGREATAGAIN
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+I'm sorry for not making a how to build, im lowkey way too lazy for that, if you want it just download the apk.. Ok?
+-- You can always search for a tutorial!
+
+Example Video:
+localify/public/gif.gif
+
+Made with love by Miloga
+Made with love by 442.
+Made with love by Fever Productions
+Made with love by the Community
+
+**YES THIS IS BUILT WITH AI, IT WAS MEANT TO BE A TINY PERSONAL PROJECT NOT A OPEN-SOURCE APP! I ONLY RELEASED IT DUE TO MY FRIENDS REQUEST. CRITISIZE ME ALL YOU WANT, I DONT CARE!**
