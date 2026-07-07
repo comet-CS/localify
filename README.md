@@ -18,7 +18,7 @@ I'm sorry for not making a how to build, im lowkey way too lazy for that, if you
 -- You can always search for a tutorial!
 
 Example Video:
-localify/public/gif.gif
+![Demo](public/gif.gif)
 
 Made with love by Miloga
 Made with love by 442.
