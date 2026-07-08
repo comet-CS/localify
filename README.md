@@ -1,5 +1,8 @@
 # Welcome to Localify!
 
+![Banner](public/banner.png)
+---
+
 **Have you ever been on vacation, no stable WiFi, dont wanna spend a whole bunch of money on Roaming charges, but still want to listen to music? Well Localify is your solution!**
 
 **Localify automatically detects all music/sound files on your Android phone and displays them.**
